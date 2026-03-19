@@ -13,6 +13,7 @@ class DraftPlanPreferredPick extends Model
         'draft_plan_id',
         'hero_id',
         'note',
+        'role',
         'priority',
         'sort_order',
     ];

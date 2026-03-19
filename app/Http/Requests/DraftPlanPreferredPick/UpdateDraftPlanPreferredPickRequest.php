@@ -16,6 +16,7 @@ class UpdateDraftPlanPreferredPickRequest extends FormRequest
         return [
             'hero_id' => ['sometimes', 'required', 'exists:heroes,id'],
             'note' => ['nullable', 'string'],
+            'role' => ['nullable', 'string'],
             'priority' => ['nullable', 'integer'],
             'sort_order' => ['nullable', 'integer'],
         ];
