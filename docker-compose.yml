@@ -5,36 +5,38 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: dota2_draft_api_app
-    working_dir: /var/www/html
+    container_name: dota2_draft_planner_app
+    working_dir: /var/www
     volumes:
-      - ./:/var/www/html
+      - ./:/var/www
     ports:
       - "8000:8000"
     depends_on:
-      - db
-    command: sh -c "composer install && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
-    networks:
-      - dota2_network
+      - postgres
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: >
+      sh -c "
+        if [ ! -f vendor/autoload.php ]; then
+          composer install --no-interaction --prefer-dist;
+        fi &&
+        php artisan serve --host=0.0.0.0 --port=8000
+      "
 
-  db:
+  postgres:
     image: postgres:16-alpine
-    container_name: dota2_draft_api_db
+    container_name: dota2_draft_planner_postgres
     restart: unless-stopped
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: dota2_draft_planner
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - dota2_network
 
 volumes:
   postgres_data:
-
-networks:
-  dota2_network:
-    driver: bridge

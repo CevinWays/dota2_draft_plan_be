@@ -1,58 +1,445 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Dota2 Draft Planner API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A dedicated backend API for managing Dota 2 draft planning scenarios (bans, preferred picks, and enemy threats), built with **Laravel** and **PostgreSQL**.
 
-## About Laravel
+This project is packaged using **Docker Compose** and includes a **single command** to initialize and populate the database (**migrate + seed**), as required.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend**: Laravel (PHP)
+- **Database**: PostgreSQL
+- **Containerization**: Docker + Docker Compose
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# Features
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Dockerized backend API service
+- PostgreSQL database service
+- One-command database initialization (`migrate + seed`)
+- Supports:
+  - **Docker PostgreSQL**
+  - **External PostgreSQL** (via environment configuration)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+# Requirements
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Please make sure you have installed:
+
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)  
+  (usually included in modern Docker installations)
+
+Optional (for convenience):
+- `make`
+
+---
+
+# Project Structure
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+.
+├── app/
+├── bootstrap/
+├── config/
+├── database/
+├── docker/
+│   └── php/
+│       └── Dockerfile
+├── routes/
+├── docker-compose.yml
+├── Makefile
+└── README.md
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+# Quick Start (Using Docker PostgreSQL)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+This is the default and recommended setup.
 
-## Code of Conduct
+## 1. Clone the repository
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+git clone git@github.com:CevinWays/dota2_draft_plan_be.git
+cd dota2_draft_plan_be
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 2. Prepare environment file
 
-## License
+Copy the example environment file:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cp .env.example .env
+```
+
+Make sure the database configuration uses the Docker PostgreSQL service:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=postgres
+DB_PORT=5432
+DB_DATABASE=dota2_draft_planner
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+```
+
+---
+
+## 3. Start containers
+
+Using Makefile (recommended):
+
+```bash
+make up
+```
+
+Or directly with Docker Compose:
+
+```bash
+docker compose up -d --build
+```
+
+---
+
+## 4. Generate application key (if needed)
+
+If `APP_KEY` is not already set in `.env`:
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+---
+
+## 5. Initialize and populate the database (**required one-command setup**)
+
+This project provides a dedicated command to initialize the database:
+
+```bash
+docker compose exec app php artisan app:init
+```
+
+This command will:
+
+- Wait until the database is reachable
+- Run migrations
+- Run seeders
+
+### Optional (with Makefile)
+
+```bash
+make init
+```
+
+---
+
+## 6. Access the API
+
+Once the containers are running:
+
+```bash
+http://localhost:8000
+```
+
+---
+
+# One-Command Database Initialization
+
+To satisfy the requirement:
+
+> One command to initialize and populate the local database (migrate + seed)
+
+Use:
+
+```bash
+docker compose exec app php artisan app:init
+```
+
+This works regardless of whether the application connects to:
+
+- the included Docker PostgreSQL service, or
+- an external PostgreSQL instance,
+
+as long as the `.env` database configuration points to a reachable PostgreSQL host.
+
+---
+
+# Using External PostgreSQL
+
+This project also supports connecting the API container to an external PostgreSQL instance instead of the included Docker PostgreSQL service.
+
+## Example:
+
+Update `.env`:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=host.docker.internal
+DB_PORT=54322
+DB_DATABASE=postgres
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+```
+
+> Note: `host.docker.internal` is enabled in `docker-compose.yml` for host access from the container.
+
+Then start the application container as usual:
+
+```bash
+docker compose up -d --build
+```
+
+Run the **same initialization command**:
+
+```bash
+docker compose exec app php artisan app:init
+```
+
+✅ Same command, different database target via environment configuration.
+
+---
+
+# Useful Commands
+
+## Start containers
+
+```bash
+make up
+```
+
+or
+
+```bash
+docker compose up -d --build
+```
+
+---
+
+## Stop containers
+
+```bash
+make down
+```
+
+or
+
+```bash
+docker compose down
+```
+
+---
+
+## Restart containers
+
+```bash
+make restart
+```
+
+---
+
+## View logs
+
+```bash
+make logs
+```
+
+---
+
+## Open shell inside app container
+
+```bash
+make bash
+```
+
+---
+
+## Run migrations only
+
+```bash
+make migrate
+```
+
+---
+
+## Run seeders only
+
+```bash
+make seed
+```
+
+---
+
+## Rebuild database from scratch
+
+```bash
+make fresh
+```
+
+Equivalent to:
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+---
+
+# Docker Services
+
+## `app`
+Laravel API service.
+
+- Built from: `docker/php/Dockerfile`
+- Exposes: `8000`
+
+Runs the application using Laravel’s built-in development server:
+
+```bash
+php artisan serve --host=0.0.0.0 --port=8000
+```
+
+---
+
+## `postgres`
+PostgreSQL database service.
+
+- Image: `postgres:16-alpine`
+- Exposes: `5432`
+
+Default credentials:
+
+- **Database**: `dota2_draft_planner`
+- **Username**: `postgres`
+- **Password**: `postgres`
+
+---
+
+# Custom Artisan Command
+
+This project includes a dedicated artisan command:
+
+```bash
+php artisan app:init
+```
+
+## Purpose
+
+Initialize the application database in a single command.
+
+## Behavior
+
+- Waits for PostgreSQL to become available
+- Runs:
+  - `php artisan migrate`
+  - `php artisan db:seed`
+
+## Optional fresh mode
+
+```bash
+php artisan app:init --fresh
+```
+
+This will run:
+
+- `php artisan migrate:fresh --seed`
+
+---
+
+# API Base URL
+
+```bash
+http://localhost:8000/api
+```
+
+---
+
+# Notes
+
+- Redis is intentionally not included to keep the setup minimal and focused on the required scope.
+- Nginx is intentionally not included; the Laravel built-in server is sufficient for local evaluation and demo purposes.
+- The included PostgreSQL service is the default option, but the application can also connect to an external PostgreSQL instance by updating `.env`.
+
+---
+
+# Troubleshooting
+
+## Application container starts but API is not accessible
+
+Check logs:
+
+```bash
+docker compose logs -f app
+```
+
+---
+
+## Database connection error
+
+Verify that `.env` is configured correctly.
+
+### For Docker PostgreSQL:
+
+```env
+DB_HOST=postgres
+DB_PORT=5432
+DB_DATABASE=dota2_draft_planner
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+```
+
+### For external PostgreSQL :
+
+```env
+DB_HOST=host.docker.internal
+DB_PORT=<your-port>
+DB_DATABASE=<your-db-name>
+DB_USERNAME=<your-username>
+DB_PASSWORD=<your-password>
+```
+
+Then rerun:
+
+```bash
+docker compose exec app php artisan app:init
+```
+
+---
+
+## `APP_KEY` missing
+
+Generate it:
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+---
+
+# Submission Notes
+
+This project was designed to explicitly satisfy the following requirements:
+
+- Dedicated backend API service
+- PostgreSQL database
+- Docker Compose packaging
+- One-command local database initialization and population (`migrate + seed`)
+- Compatibility with either:
+  - Docker PostgreSQL
+  - external PostgreSQL
+
+The main initialization command is:
+
+```bash
+docker compose exec app php artisan app:init
+```
+
+---
+
+# Author
+
+**Cevin Ways**
