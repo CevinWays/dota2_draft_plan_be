@@ -6,17 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DraftPlan\StoreDraftPlanRequest;
 use App\Http\Requests\DraftPlan\UpdateDraftPlanRequest;
 use App\Models\DraftPlan;
-use App\Models\DraftPlanBan;
-use App\Models\DraftPlanPreferredPick;
-use App\Models\DraftPlanEnemyThreat;
-use App\Models\DraftPlanItemTiming;
 use Illuminate\Http\Request;
 
 class DraftPlanController extends Controller
 {
     public function index(Request $request)
     {
-        $draftPlans = $request->user()->draftPlans()->get();
+        $draftPlans = $request->user()->draftPlans()
+            ->withCount(['bans', 'preferredPicks', 'enemyThreats'])
+            ->get()
+            ->map(function ($draftPlan) {
+                $draftPlan->count_ban_hero = $draftPlan->bans_count;
+                $draftPlan->count_prefered_pick_hero = $draftPlan->preferred_picks_count;
+                $draftPlan->count_enemy_threat_hero = $draftPlan->enemy_threats_count;
+                unset($draftPlan->bans_count, $draftPlan->preferred_picks_count, $draftPlan->enemy_threats_count);
+                return $draftPlan;
+            });
 
         return response()->json([
             'data' => $draftPlans
@@ -35,17 +40,13 @@ class DraftPlanController extends Controller
     public function show(Request $request, $id)
     {
         $draftPlan = $request->user()->draftPlans()->findOrFail($id);
-        $draftPlanBanHero = DraftPlanBan::where('draft_plan_id', $id)->get();
-        $draftPlanPreferredPick = DraftPlanPreferredPick::where('draft_plan_id', $id)->get();
-        $draftPlanEnemyThreat = DraftPlanEnemyThreat::where('draft_plan_id', $id)->get();
-        $draftPlanItemTiming = DraftPlanItemTiming::where('draft_plan_id', $id)->get();
 
         return response()->json([
             'data' => $draftPlan,
-            'bans' => $draftPlanBanHero,
-            'preferredPicks' => $draftPlanPreferredPick,
-            'enemyThreats' => $draftPlanEnemyThreat,
-            'itemTimings' => $draftPlanItemTiming,
+            'bans' => $draftPlan->bans()->with('hero')->get(),
+            'preferredPicks' => $draftPlan->preferredPicks()->with('hero')->get(),
+            'enemyThreats' => $draftPlan->enemyThreats()->with('hero')->get(),
+            'itemTimings' => $draftPlan->itemTimings()->get(),
         ]);
     }
 
