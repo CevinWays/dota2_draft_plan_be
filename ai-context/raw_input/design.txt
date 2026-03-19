@@ -1,0 +1,104 @@
+Stack final:
+Backend: Laravel API
+Auth: Laravel Sanctum
+DB: PostgreSQL
+Infra: Docker Compose
+Mobile Client: Flutter
+No web frontend
+
+1. TECH STACK
+Backend
+Laravel 11 / 12
+
+
+PHP 8.3+
+
+
+Laravel API only
+
+
+Eloquent ORM
+
+
+Laravel Migrations + Seeder
+
+
+Laravel Form Request Validation
+
+
+Laravel API Resources
+
+Database
+PostgreSQL
+Infra
+Docker Compose
+backend service
+postgres service
+Mobile
+Flutter
+Cubit / Bloc
+Clean Architecture folder structure
+
+MOBILE
+lib/
+  core/
+    constants/
+    error/
+    network/
+      dio_client.dart
+      api_endpoints.dart
+    storage/
+      secure_storage_service.dart
+    utils/
+
+  features/
+    auth/
+      data/
+        datasources/
+        models/
+        repositories/
+      domain/
+        entities/
+        repositories/
+        usecases/
+      presentation/
+        cubit/
+        pages/
+        widgets/
+
+    heroes/
+      data/
+      domain/
+      presentation/
+
+    draft_plans/
+      data/
+      domain/
+      presentation/
+        pages/
+        widgets/
+
+  injection_container.dart
+  main.dart
+
+
+3. HLA
+Flutter Mobile App
+   |
+   | HTTPS / REST API
+   v
+Laravel API
+   |- Auth (Sanctum Personal Access Tokens)
+   |- Draft Plan Module
+   |- Hero Module
+   |- Validation / Policies / Resources
+   |
+PostgreSQL
+   |- users
+   |- personal_access_tokens
+   |- heroes
+   |- draft_plans
+   |- draft_plan_bans
+   |- draft_plan_preferred_picks
+   |- draft_plan_enemy_threats
+   |- draft_plan_item_timings

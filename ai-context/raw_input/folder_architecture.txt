@@ -1,0 +1,70 @@
+1. Backend Laravel Structure :
+
+dota2-draft-planner-api/
+├── app/
+│   ├── Console/
+│   │   └── Commands/
+│   │       └── SyncHeroesCommand.php
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Api/
+│   │   │   │   ├── Auth/
+│   │   │   │   │   └── AuthController.php
+│   │   │   │   ├── HeroController.php
+│   │   │   │   ├── DraftPlanController.php
+│   │   │   │   ├── DraftPlanBanController.php
+│   │   │   │   ├── DraftPlanPreferredPickController.php
+│   │   │   │   ├── DraftPlanEnemyThreatController.php
+│   │   │   │   └── DraftPlanItemTimingController.php
+│   │   ├── Requests/
+│   │   │   ├── Auth/
+│   │   │   │   ├── LoginRequest.php
+│   │   │   │   └── RegisterRequest.php
+│   │   │   ├── DraftPlan/
+│   │   │   │   ├── StoreDraftPlanRequest.php
+│   │   │   │   └── UpdateDraftPlanRequest.php
+│   │   │   ├── DraftPlanBan/
+│   │   │   │   ├── StoreDraftPlanBanRequest.php
+│   │   │   │   └── UpdateDraftPlanBanRequest.php
+│   │   │   ├── DraftPlanPreferredPick/
+│   │   │   │   ├── StoreDraftPlanPreferredPickRequest.php
+│   │   │   │   └── UpdateDraftPlanPreferredPickRequest.php
+│   │   │   ├── DraftPlanEnemyThreat/
+│   │   │   │   ├── StoreDraftPlanEnemyThreatRequest.php
+│   │   │   │   └── UpdateDraftPlanEnemyThreatRequest.php
+│   │   │   └── DraftPlanItemTiming/
+│   │   │       ├── StoreDraftPlanItemTimingRequest.php
+│   │   │       └── UpdateDraftPlanItemTimingRequest.php
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Hero.php
+│   │   ├── DraftPlan.php
+│   │   ├── DraftPlanBan.php
+│   │   ├── DraftPlanPreferredPick.php
+│   │   ├── DraftPlanEnemyThreat.php
+│   │   └── DraftPlanItemTiming.php
+│   └── Services/
+│       └── HeroSyncService.php
+├── database/
+│   ├── factories/
+│   ├── migrations/
+│   └── seeders/
+│       ├── DatabaseSeeder.php
+│       ├── UserSeeder.php
+│       └── HeroSeeder.php (optional fallback/manual)
+├── routes/
+│   └── api.php
+├── docker/
+│   ├── php/
+│   │   └── Dockerfile
+│   └── nginx/ (optional, skip for now if using php artisan serve)
+├── docker-compose.yml
+└── README.md
+
+Controller dipisah per domain
+
+FormRequest supaya validasi clean
+
+Service layer untuk integrasi eksternal (OpenDota)
+
+Command untuk manual/cron sync hero

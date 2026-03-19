@@ -1,0 +1,18 @@
+these endpoint should support multiple hero :
+
+draft_plan_bans
+
+draft_plan_preferred_picks
+
+draft_plan_enemy_threats
+
+expected :
+1. client send array of hero_id
+2. server create multiple record based on array of hero_id
+3. return all record
+
+{
+    "hero_ids": [1, 2, 3]
+}
+
+check controller, validation, route design, service logic, and response format if needed

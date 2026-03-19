@@ -1,0 +1,61 @@
+2. docker-compose.yml for Laravel + PostgreSQL
+
+=====docker-compose.yml=====
+
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: dota2_draft_api_app
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    command: sh -c "composer install && php artisan key:generate && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+    networks:
+      - dota2_network
+
+  db:
+    image: postgres:16-alpine
+    container_name: dota2_draft_api_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dota2_draft_planner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dota2_network
+
+volumes:
+  postgres_data:
+
+networks:
+  dota2_network:
+    driver: bridge
+
+=====docker/php/Dockerfile=====
+
+FROM php:8.3-cli
+
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    zip \
+    && docker-php-ext-install pdo pdo_pgsql pgsql zip
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html

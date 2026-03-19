@@ -1,0 +1,76 @@
+7. PROPOSED API ENDPOINTS (LATEST & SHOULD MATCH NEXT CHAT)
+Public Auth
+
+POST /api/register
+
+POST /api/login
+
+Protected Auth
+
+POST /api/logout
+
+GET /api/me
+
+Heroes
+
+GET /api/heroes
+
+search by localized_name
+
+filter by primary_attr (optional)
+
+GET /api/heroes/{id}
+
+Draft Plans
+
+GET /api/draft-plans
+
+POST /api/draft-plans
+
+GET /api/draft-plans/{id}
+
+PUT /api/draft-plans/{id}
+
+DELETE /api/draft-plans/{id}
+
+Draft Summary
+
+GET /api/draft-plans/{id}/summary
+
+Bans
+
+GET /api/draft-plans/{id}/bans
+
+POST /api/draft-plans/{id}/bans
+
+PUT /api/draft-plans/{id}/bans/{banId} ✅
+
+DELETE /api/draft-plans/{id}/bans/{banId}
+
+Preferred Picks
+
+GET /api/draft-plans/{id}/preferred-picks
+
+POST /api/draft-plans/{id}/preferred-picks
+
+PUT /api/draft-plans/{id}/preferred-picks/{pickId} ✅
+
+DELETE /api/draft-plans/{id}/preferred-picks/{pickId}
+
+Enemy Threats
+
+GET /api/draft-plans/{id}/enemy-threats
+
+POST /api/draft-plans/{id}/enemy-threats
+
+PUT /api/draft-plans/{id}/enemy-threats/{threatId} ✅
+
+DELETE /api/draft-plans/{id}/enemy-threats/{threatId}
+
+Item Timings
+
+GET /api/draft-plans/{id}/item-timings
+
+POST /api/draft-plans/{id}/item-timings
+
+PUT /api/draft-plans/{id}/item-timings/{timingId}

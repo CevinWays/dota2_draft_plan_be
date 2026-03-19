@@ -1,0 +1,2 @@
+6. install Sanctum Auth Setup
+composer require laravel/sanctum
